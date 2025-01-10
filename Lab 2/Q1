@@ -1,0 +1,125 @@
+
+# 1. grep commands
+echo "1. Testing grep commands:"
+echo "-------------------------"
+echo "Search for 'apple' in fruitlist.txt"
+grep apple fruitlist.txt
+
+echo "Search for 'apple' with case insensitive"
+grep -i apple fruitlist.txt
+
+echo "Search recursively in folder for 'apple'"
+grep -r apple folderName/
+
+echo "Search for lines starting with 'p' in fruitlist.txt"
+grep ^p fruitlist.txt
+
+echo "Exclude lines containing 'apple' from fruitlist.txt"
+grep -v apple fruitlist.txt
+
+# 2. Test for sort commands
+echo ""
+echo "2. Testing sort commands:"
+echo "-------------------------"
+echo "Sort fruitlist.txt alphabetically"
+sort fruitlist.txt
+
+echo "Sort fruitlist.txt in reverse order"
+sort -r fruitlist.txt
+
+echo "Sort fruitlist.txt numerically"
+sort -n fruitlist.txt
+
+# 3. Test for wc (word count) commands
+echo ""
+echo "3. Testing wc command:"
+echo "----------------------"
+echo "Word count for fruitlist.txt"
+wc fruitlist.txt
+
+echo "Word count for all files in current directory"
+wc *
+
+# 4. Test for cut commands
+echo ""
+echo "4. Testing cut commands:"
+echo "------------------------"
+echo "Extract first 3 characters from record.txt"
+cut -c 1-3 record.txt
+
+echo "Extract fields 1, 4, and 7 from record.txt"
+cut -f 1,4,7 record.txt
+
+# 5. Test for sed commands
+echo ""
+echo "5. Testing sed commands:"
+echo "------------------------"
+echo "Replace 'input' with 'output' in my_file"
+sed 's/input/output/' my_file
+
+echo "Delete lines starting with '#' in my_file"
+sed '/^#/d' my_file
+
+echo "Insert 'xyz' after lines containing 'word' in filename"
+sed '/word/a xyz' filename
+
+# 6. Test for tr commands
+echo ""
+echo "6. Testing tr commands:"
+echo "------------------------"
+echo "Convert all lowercase letters to uppercase"
+tr '[a-z]' '[A-Z]' < fruitlist.txt
+
+echo "Delete all carriage return characters"
+tr -d '\r' < fruitlist.txt
+
+# 7. Test for ps and kill commands
+echo ""
+echo "7. Testing process management commands:"
+echo "-------------------------------------"
+echo "List running processes"
+ps
+
+echo "Kill all processes named wc"
+pkill wc
+
+# 8. Test for file permission commands
+echo ""
+echo "8. Testing chmod commands:"
+echo "--------------------------"
+echo "Change permissions of Comments.txt"
+chmod a+r Comments.txt
+
+echo "Remove execute permission for all classes on Comments.txt"
+chmod a-x Comments.txt
+
+echo "Add read and execute permissions for all on viewer.sh"
+chmod a+rx viewer.sh
+
+# 9. Test for echo command
+echo ""
+echo "9. Testing echo command:"
+echo "-------------------------"
+echo "This is a test message."
+echo "Displaying 'Hello, World!'"
+echo "Hello, World!"
+
+# 10. Test for bc (Basic Calculator) command
+echo ""
+echo "10. Testing bc command:"
+echo "-----------------------"
+echo "Performing 5 + 2"
+echo "5 + 2" | bc
+
+echo "Performing floating point calculation 5 / 2"
+echo "5 / 2" | bc -l
+
+# 11. Test for vi editor usage (simulated here as an action)
+echo ""
+echo "11. Testing vi editor usage (simulation):"
+echo "----------------------------------------"
+echo "To edit 'studentInformation.txt', run: vi studentInformation.txt"
+echo "To save and quit, use commands: :wq"
+
+
+
