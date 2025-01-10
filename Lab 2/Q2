@@ -1,0 +1,23 @@
+# 1. Select the lines from a file that have exactly two characters.
+echo "1. Lines with exactly two characters:"
+grep -E '^.{2}$' <fileName>  
+
+# 2. Select the lines from a file that start with an uppercase letter.
+echo ""
+echo "2. Lines starting with an uppercase letter:"
+grep -E '^[A-Z]' <fileName>  
+
+# 3. Select the lines from a file that end with a period.
+echo ""
+echo "3. Lines that end with a period:"
+grep -E '\.$' <fileName>  
+
+# 4. Select the lines in a file that have one or more blank spaces.
+echo ""
+echo "4. Lines that contain one or more blank spaces:"
+grep -E '\s+' <fileName>  
+
+# 5. Select the lines in a file that have digits as one of the characters, and direct them to another file.
+echo ""
+echo "5. Lines containing digits (redirected to another file):"
+grep -E '[0-9]' <fileName> > outputFile.txt  
