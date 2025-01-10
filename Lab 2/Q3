@@ -1,0 +1,7 @@
+grep -c 'ICT' studentInformation.txt
+sed 's/IT/Information Technology/g' studentInformation.txt > ITStudents.txt
+grep '1234' studentInformation.txt | awk -F ':' '{ avg=($6+$7+$8)/3; print avg }'
+sed '1s/.*/\U&/' studentInformation.txt
+
+
+grep -l 'MIT' * | xargs grep -l 'MIT' | xargs sed 's/MIT/Manipal Institute of Technology/g'
