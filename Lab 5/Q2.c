@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/wait.h>  // Include this header file
+#include <sys/wait.h>  
 
 void sortStrings(char *arr[], int n) {
     char *temp;
