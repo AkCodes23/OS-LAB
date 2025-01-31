@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 int main() {
     pid_t pid;
@@ -23,3 +24,7 @@ int main() {
 
     return 0;
 }
+
+//gcc -o Q1 Q1.c
+//./Q1
+
