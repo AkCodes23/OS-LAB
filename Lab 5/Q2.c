@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>  // Include this header file
 
 void sortStrings(char *arr[], int n) {
     char *temp;
@@ -47,3 +48,6 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+//gcc -o Q2 Q2.c
+// ./Q2 akhil suraj palindrome
