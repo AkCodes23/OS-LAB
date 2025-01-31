@@ -73,9 +73,10 @@ int main() {
             exit(0);
         } else {
             
-            int status;
-            wait(&status);
-            printf("Parent process waiting for one child to complete.\n");
+            int status1, status2;
+            waitpid(pid1, &status1, 0);
+            waitpid(pid2, &status2, 0);
+            printf("Parent process waiting for both children to complete.\n");
         }
     }
 
@@ -86,3 +87,6 @@ int main() {
 
     return 0;
 }
+
+// gcc -o Q3 Q3.c
+// ./Q3
