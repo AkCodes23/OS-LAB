@@ -1,114 +1,139 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define P 5  // Number of processes
-#define R 3  // Number of resources
-
-bool is_safe(int processes[], int avail[], int max[][R], int alloc[][R]) {
-    int work[R];
-    bool finish[P] = {0};
-    int safe_seq[P];
+bool isSafe(int processes, int resources, int need[][resources], int available[resources], int allocation[][resources]) {
+    int work[resources];
+    bool finish[processes];
+    int safeSeq[processes];
     int count = 0;
 
-    for (int i = 0; i < R; i++) {
-        work[i] = avail[i];
+    for (int i = 0; i < resources; i++) {
+        work[i] = available[i];
+    }
+    for (int i = 0; i < processes; i++) {
+        finish[i] = false;
     }
 
-    while (count < P) {
+    while (count < processes) {
         bool found = false;
-        for (int p = 0; p < P; p++) {
-            if (!finish[p]) {
-                bool can_allocate = true;
-                for (int r = 0; r < R; r++) {
-                    if (max[p][r] - alloc[p][r] > work[r]) {
-                        can_allocate = false;
+        for (int p = 0; p < processes; p++) {
+            if (finish[p] == false) {
+                int j;
+                for (j = 0; j < resources; j++) {
+                    if (need[p][j] > work[j]) {
                         break;
                     }
                 }
-
-                if (can_allocate) {
-                    for (int r = 0; r < R; r++) {
-                        work[r] += alloc[p][r];
+                if (j == resources) {
+                    for (int k = 0; k < resources; k++) {
+                        work[k] += allocation[p][k];
                     }
-                    safe_seq[count++] = processes[p];
+                    safeSeq[count++] = p;
                     finish[p] = true;
                     found = true;
                 }
             }
         }
-
-        if (!found) {
+        if (found == false) {
             return false;
         }
     }
 
-    printf("System is in a safe state.\nSafe sequence: ");
-    for (int i = 0; i < P; i++) {
-        printf("%d ", safe_seq[i]);
+    printf("Safe Sequence: ");
+    for (int i = 0; i < processes; i++) {
+        printf("P%d ", safeSeq[i]);
     }
     printf("\n");
-
     return true;
 }
 
-bool request_resources(int processes[], int avail[], int max[][R], int alloc[][R], int request[], int p) {
-    for (int r = 0; r < R; r++) {
-        if (request[r] > max[p][r] - alloc[p][r]) {
+bool resourceRequest(int processes, int resources, int need[][resources], int available[resources], int allocation[][resources], int processId, int request[resources]) {
+    for (int i = 0; i < resources; i++) {
+        if (request[i] > need[processId][i]) {
+            printf("Error: Request exceeds need.\n");
             return false;
         }
     }
 
-    for (int r = 0; r < R; r++) {
-        if (request[r] > avail[r]) {
+    for (int i = 0; i < resources; i++) {
+        if (request[i] > available[i]) {
+            printf("Error: Resources not available.\n");
             return false;
         }
     }
 
-    for (int r = 0; r < R; r++) {
-        avail[r] -= request[r];
-        alloc[p][r] += request[r];
+    for (int i = 0; i < resources; i++) {
+        available[i] -= request[i];
+        allocation[processId][i] += request[i];
+        need[processId][i] -= request[i];
     }
 
-    if (is_safe(processes, avail, max, alloc)) {
+    if (isSafe(processes, resources, need, available, allocation)) {
         return true;
     } else {
-        for (int r = 0; r < R; r++) {
-            avail[r] += request[r];
-            alloc[p][r] -= request[r];
+        for (int i = 0; i < resources; i++) {
+            available[i] += request[i];
+            allocation[processId][i] -= request[i];
+            need[processId][i] += request[i];
         }
+        printf("Error: Request leads to an unsafe state.\n");
         return false;
     }
 }
 
 int main() {
-    int processes[] = {0, 1, 2, 3, 4};
-    int avail[] = {3, 3, 2};
-    int max[P][R] = {
-        {7, 5, 3},
-        {3, 2, 2},
-        {9, 0, 2},
-        {2, 2, 2},
-        {4, 3, 3}
-    };
-    int alloc[P][R] = {
-        {0, 1, 0},
-        {2, 0, 0},
-        {3, 0, 2},
-        {2, 1, 1},
-        {0, 0, 2}
-    };
-    int request[] = {1, 0, 2};
-    int p = 1;
+    int processes, resources;
 
-    if (request_resources(processes, avail, max, alloc, request, p)) {
-        printf("Request can be granted.\n");
+    printf("Enter the number of processes: ");
+    scanf("%d", &processes);
+
+    printf("Enter the number of resources: ");
+    scanf("%d", &resources);
+
+    int max[processes][resources], allocation[processes][resources], available[resources];
+    int need[processes][resources];
+
+    printf("Enter the Max matrix:\n");
+    for (int i = 0; i < processes; i++) {
+        for (int j = 0; j < resources; j++) {
+            scanf("%d", &max[i][j]);
+        }
+    }
+
+    printf("Enter the Allocation matrix:\n");
+    for (int i = 0; i < processes; i++) {
+        for (int j = 0; j < resources; j++) {
+            scanf("%d", &allocation[i][j]);
+        }
+    }
+
+    printf("Enter the Available vector:\n");
+    for (int i = 0; i < resources; i++) {
+        scanf("%d", &available[i]);
+    }
+
+    for (int i = 0; i < processes; i++) {
+        for (int j = 0; j < resources; j++) {
+            need[i][j] = max[i][j] - allocation[i][j];
+        }
+    }
+
+    if (isSafe(processes, resources, need, available, allocation)) {
+        int processId;
+        int request[resources];
+
+        printf("Enter the process ID for resource request: ");
+        scanf("%d", &processId);
+
+        printf("Enter the resource request vector:\n");
+        for (int i = 0; i < resources; i++) {
+            scanf("%d", &request[i]);
+        }
+
+        resourceRequest(processes, resources, need, available, allocation, processId, request);
     } else {
-        printf("Request cannot be granted. System would be unsafe.\n");
+        printf("System is in an unsafe state.\n");
     }
 
     return 0;
 }
-
-
-//gcc -o Q1 Q1.c
-//./Q1
