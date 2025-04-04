@@ -100,13 +100,20 @@ void preemptive_sjf(struct process p[], int n) {
 }
 
 void round_robin(struct process p[], int n, int quantum) {
-    int time = 0, completed = 0;
+    int time = 0, completed = 0, i = 0;
+    int process_available = 1;
+
     while (completed != n) {
+        process_available = 0;
+
         for (int i = 0; i < n; i++) {
+            
             if (p[i].arrival_time <= time && !p[i].completed) {
-                if (p[i].remaining_time <= quantum) {
+                process_available = 1;
+
+                if (p[i].remaining_time <= quantum) { 
                     time += p[i].remaining_time;
-                    p[i].remaining_time = 0;
+                    p[i].remaining_time = 0; 
                     p[i].completed = 1;
                     completed++;
                     p[i].turnaround_time = time - p[i].arrival_time;
@@ -117,9 +124,16 @@ void round_robin(struct process p[], int n, int quantum) {
                 }
             }
         }
+
+        
+        if (!process_available) {
+            time++;
+        }
     }
+
     display(p, n);
 }
+
 
 void non_preemptive_priority(struct process p[], int n) {
     int time = 0, completed = 0, max_priority, max_index;
@@ -154,3 +168,4 @@ void display(struct process p[], int n) {
         printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", p[i].id, p[i].burst_time, p[i].arrival_time, p[i].priority, p[i].waiting_time, p[i].turnaround_time);
     }
 }
+
