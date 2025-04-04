@@ -4,104 +4,131 @@
 typedef struct Block {
     int size;
     int allocated;
-    struct Block* next;
+    struct Block *next;
 } Block;
 
-Block* create_block(int size) {
-    Block* block = (Block*)malloc(sizeof(Block));
+Block *createBlock(int size) {
+    Block *block = (Block *)malloc(sizeof(Block));
     block->size = size;
     block->allocated = 0;
     block->next = NULL;
     return block;
 }
 
-Block* first_fit(Block* head, int size) {
-    Block* current = head;
-    while (current != NULL) {
-        if (!current->allocated && current->size >= size) {
-            return current;
+void insertBlock(Block **head, Block *block) {
+    if (*head == NULL) {
+        *head = block;
+    } else {
+        Block *temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
         }
-        current = current->next;
+        temp->next = block;
     }
-    return NULL;
 }
 
-Block* best_fit(Block* head, int size) {
-    Block* best_block = NULL;
-    Block* current = head;
-    while (current != NULL) {
-        if (!current->allocated && current->size >= size) {
-            if (best_block == NULL || current->size < best_block->size) {
-                best_block = current;
+void printBlocks(Block *head) {
+    Block *temp = head;
+    while (temp != NULL) {
+        printf("Size: %d, Allocated: %d -> ", temp->size, temp->allocated);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int firstFit(Block *head, int processSize) {
+    Block *temp = head;
+    int blockIndex = 0;
+    while (temp != NULL) {
+        if (temp->allocated == 0 && temp->size >= processSize) {
+            temp->allocated = 1;
+            return blockIndex;
+        }
+        temp = temp->next;
+        blockIndex++;
+    }
+    return -1;
+}
+
+int bestFit(Block *head, int processSize) {
+    Block *temp = head;
+    int bestIndex = -1;
+    int bestSize = -1;
+    int blockIndex = 0;
+
+    while (temp != NULL) {
+        if (temp->allocated == 0 && temp->size >= processSize) {
+            if (bestSize == -1 || temp->size < bestSize) {
+                bestSize = temp->size;
+                bestIndex = blockIndex;
             }
         }
-        current = current->next;
+        temp = temp->next;
+        blockIndex++;
     }
-    return best_block;
-}
 
-void allocate(Block* block, int size) {
-    block->allocated = 1;
-    printf("Allocated block of size %d\n", size);
-}
-
-void deallocate(Block* block) {
-    block->allocated = 0;
-    printf("Deallocated block of size %d\n", block->size);
-}
-
-void print_memory(Block* head) {
-    Block* current = head;
-    while (current != NULL) {
-        printf("Block size: %d, allocated: %d\n", current->size, current->allocated);
-        current = current->next;
+    if (bestIndex != -1) {
+        temp = head;
+        for (int i = 0; i < bestIndex; i++) {
+            temp = temp->next;
+        }
+        temp->allocated = 1;
     }
+
+    return bestIndex;
 }
 
 int main() {
-    // Create memory blocks
-    Block* head = create_block(100);
-    head->next = create_block(50);
-    head->next->next = create_block(30);
-    head->next->next->next = create_block(120);
+    Block *head = NULL;
+    int numBlocks, numProcesses;
 
-    printf("Initial memory blocks:\n");
-    print_memory(head);
+    printf("Enter number of memory blocks: ");
+    scanf("%d", &numBlocks);
 
-    // First fit allocation
-    Block* block = first_fit(head, 40);
-    if (block != NULL) {
-        allocate(block, 40);
-    } else {
-        printf("No suitable block found for allocation (first fit)\n");
+    printf("Enter sizes of memory blocks:\n");
+    for (int i = 0; i < numBlocks; i++) {
+        int size;
+        scanf("%d", &size);
+        insertBlock(&head, createBlock(size));
     }
 
-    // Best fit allocation
-    block = best_fit(head, 60);
-    if (block != NULL) {
-        allocate(block, 60);
-    } else {
-        printf("No suitable block found for allocation (best fit)\n");
+    printf("Enter number of processes: ");
+    scanf("%d", &numProcesses);
+
+    int processes[numProcesses];
+    printf("Enter sizes of processes:\n");
+    for (int i = 0; i < numProcesses; i++) {
+        scanf("%d", &processes[i]);
     }
 
-    printf("\nMemory blocks after allocations:\n");
-    print_memory(head);
-
-    // Deallocate a block
-    deallocate(head->next);
-
-    printf("\nMemory blocks after deallocation:\n");
-    print_memory(head);
-
-    // Free allocated memory blocks
-    while (head != NULL) {
-        Block* temp = head;
-        head = head->next;
-        free(temp);
+    printf("\nFirst Fit Allocation:\n");
+    for (int i = 0; i < numProcesses; i++) {
+        int blockIndex = firstFit(head, processes[i]);
+        if (blockIndex != -1) {
+            printf("Process %d (Size: %d) allocated to block %d\n", i, processes[i], blockIndex);
+        } else {
+            printf("Process %d (Size: %d) not allocated\n", i, processes[i]);
+        }
     }
+    printBlocks(head);
+
+    Block *bestHead = NULL;
+    Block *temp = head;
+    while(temp!=NULL){
+        insertBlock(&bestHead, createBlock(temp->size));
+        temp=temp->next;
+    }
+
+    printf("\nBest Fit Allocation:\n");
+    for (int i = 0; i < numProcesses; i++) {
+        int blockIndex = bestFit(bestHead, processes[i]);
+        if (blockIndex != -1) {
+            printf("Process %d (Size: %d) allocated to block %d\n", i, processes[i], blockIndex);
+        } else {
+            printf("Process %d (Size: %d) not allocated\n", i, processes[i]);
+        }
+    }
+    printBlocks(bestHead);
 
     return 0;
 }
-
-//gcc -o Q1 Q1.c
-//./Q1
